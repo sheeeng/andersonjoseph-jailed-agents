@@ -58,6 +58,7 @@
             extraPkgs ? [ ],
             extraReadwriteDirs ? [ ],
             extraReadonlyDirs ? [ ],
+            env ? { },
             baseJailOptions ? commonJailOptions,
             basePackages ? commonPkgs,
           }:
@@ -69,6 +70,7 @@
               ++ (map (p: readonly (noescape p)) extraReadonlyDirs)
               ++ [ (add-pkg-deps basePackages) ]
               ++ [ (add-pkg-deps extraPkgs) ]
+              ++ (pkgs.lib.mapAttrsToList set-env env)
             )
           );
 
