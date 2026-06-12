@@ -85,6 +85,8 @@ jobs:
         run: |
           output=$(./result/bin/env-test -c 'echo "$MY_TEST_VAR $ANOTHER_VAR"')
           [ "$output" = "hello world" ]
+        env:
+          LANG: C.UTF-8
 
       - name: Build tools-test
         run: nix build ./tests#tools-test
@@ -93,3 +95,5 @@ jobs:
         run: |
           output=$(./result/bin/tools-test -c 'echo "hello world" | sed "s/world/sed/"')
           [ "$output" = "hello sed" ]
+        env:
+          LANG: C.UTF-8
