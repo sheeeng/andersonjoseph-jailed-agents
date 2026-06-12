@@ -268,6 +268,8 @@
           jailed-pi = makeJailedPi { };
         };
 
+        formatter = pkgs.nixfmt;
+
         devShells.default = pkgs.mkShell {
           packages = [
             pkgs.nixd
