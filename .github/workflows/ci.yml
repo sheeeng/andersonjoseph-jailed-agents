@@ -39,8 +39,37 @@ jobs:
       - name: Run statix
         run: nix shell nixpkgs#statix -c statix check
 
-  run-tests:
-    name: Run tests
+  build-and-test:
+    name: Build & test (${{ matrix.package }})
+    runs-on: ubuntu-slim
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - jailed-claude-code
+          - jailed-crush
+          - jailed-gemini-cli
+          - jailed-hermes-agent
+          - jailed-opencode
+          - jailed-pi
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build ${{ matrix.package }}
+        run: nix build .#${{ matrix.package }}
+
+      - name: Smoke test ${{ matrix.package }}
+        run: ./result/bin/${{ matrix.package }} --help
+
+  run-test-suite:
+    name: Run test suite (env & tools)
     runs-on: ubuntu-slim
     steps:
       - name: Checkout code
@@ -52,5 +81,18 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      - name: Run test suite
-        run: bash tests/test.sh
+      - name: Build env-test
+        run: nix build ./tests
+
+      - name: Test env parameter propagation
+        run: |
+          output=$(./result/bin/env-test -c 'echo "$MY_TEST_VAR $ANOTHER_VAR"')
+          [ "$output" = "hello world" ]
+
+      - name: Build tools-test
+        run: nix build ./tests#tools-test
+
+      - name: Test common tools availability
+        run: |
+          output=$(./result/bin/tools-test -c 'echo "hello world" | sed "s/world/sed/"')
+          [ "$output" = "hello sed" ]
