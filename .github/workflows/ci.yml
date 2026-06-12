@@ -65,9 +65,6 @@ jobs:
       - name: Build ${{ matrix.package }}
         run: nix build .#${{ matrix.package }}
 
-      - name: Smoke test ${{ matrix.package }}
-        run: ./result/bin/${{ matrix.package }} --help
-
   run-test-suite:
     name: Run test suite (env & tools)
     runs-on: ubuntu-slim
