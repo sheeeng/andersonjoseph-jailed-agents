@@ -132,33 +132,6 @@
             ];
           };
 
-        makeJailedGeminiCli =
-          {
-            name ? "jailed-gemini-cli",
-            pkg ? llm-agents.packages.${system}.gemini-cli,
-            extraPkgs ? [ ],
-            extraReadwriteDirs ? [ ],
-            extraReadonlyDirs ? [ ],
-            env ? { },
-            baseJailOptions ? commonJailOptions,
-            basePackages ? commonPkgs,
-          }:
-          makeJailedAgent {
-            inherit
-              name
-              pkg
-              extraPkgs
-              extraReadwriteDirs
-              extraReadonlyDirs
-              baseJailOptions
-              basePackages
-              env
-              ;
-            configPaths = [
-              "~/.gemini"
-            ];
-          };
-
         makeJailedHermesAgent =
           {
             name ? "jailed-hermes-agent",
@@ -249,7 +222,6 @@
           inherit makeJailedAgent;
           inherit makeJailedClaudeCode;
           inherit makeJailedCrush;
-          inherit makeJailedGeminiCli;
           inherit makeJailedHermesAgent;
           inherit makeJailedOpencode;
           inherit makeJailedPi;
@@ -262,7 +234,6 @@
         packages = {
           jailed-claude-code = makeJailedClaudeCode { };
           jailed-crush = makeJailedCrush { };
-          jailed-gemini-cli = makeJailedGeminiCli { };
           jailed-hermes-agent = makeJailedHermesAgent { };
           jailed-opencode = makeJailedOpencode { };
           jailed-pi = makeJailedPi { };
